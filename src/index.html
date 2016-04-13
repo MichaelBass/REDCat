@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" id="REDCat-app">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+    <title>RedCat</title>
+    <link rel="shortcut icon" href="redcat.ico">
+    <link rel="icon" type="image/gif" href="redcat.gif">
+
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/css/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="vendor/css/mobiscroll.custom-2.16.0.min.css">
+    <link rel="stylesheet" href="vendor/css/ui-bootstrap-0.13.3-csp.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <div id="home">
+        <div id="app-status-div">
+            <ul id="app-status-ul">
+            </ul>
+        </div>
+    </div>
+    <div ng-view class="container-fluid" id="main"></div>
+
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="vendor/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular-route.min.js"></script>
+    <script type="text/javascript" src="js/angular-resource.min.js"></script>
+
+    <script type="text/javascript" src="js/moment.js"></script>
+    <script type="text/javascript" src="vendor/js/lodash.js"></script>
+    <script type="text/javascript" src="vendor/js/mobiscroll.custom-2.16.0.min.js"></script>
+    <script type="text/javascript" src="vendor/js/ui-bootstrap-tpls-0.13.3.min.js"></script>
+    <script type="text/javascript" src="vendor/js/highstock/highstock-all.js"></script>
+    <script type="text/javascript" src="vendor/js/crypto-js/crypto-js.js"></script>
+
+    <script type="text/javascript" src="js/Application.js"></script>
+
+    <script type="text/javascript" src="js/constants/Routes.js"></script>
+    <script type="text/javascript" src="js/constants/Uuid.js"></script>
+    
+    <script type="text/javascript" src="js/controllers/HomeController.js"></script>
+    <script type="text/javascript" src="js/controllers/EngineSelectorController.js"></script>
+    <script type="text/javascript" src="js/controllers/RedCatInitializerController.js"></script>
+    <script type="text/javascript" src="js/controllers/PROMISController.js"></script>
+    <script type="text/javascript" src="js/controllers/Graph.js"></script>
+
+    <script type="text/javascript" src="js/resources/Settings.js"></script>
+    <script type="text/javascript" src="js/services/Connection.js"></script>
+    <script type="text/javascript" src="js/services/Device.js"></script>
+
+    <script type="text/javascript" src="js/caches/DeviceCache.js"></script>
+    <script type="text/javascript" src="js/caches/ResourceCache.js"></script>
+    <script type="text/javascript" src="js/caches/SettingsCache.js"></script>
+
+
+
+<script>
+    (function() {
+        var $rootScope;
+
+        function initialize() {
+            // Access the $rootScope from outside the application.
+            var injector = angular.bootstrap(document.getElementById('REDCat-app'), ['redcat']);
+            $rootScope = injector.get('$rootScope');
+
+             document.addEventListener("backbutton", function(e)
+            {
+              $("#app-status-ul").append('<li>backbutton event received</li>');
+
+               if( $("#home").length > 0){
+                  // call this to get a new token each time. don't call it to reuse existing token.
+                  //pushNotification.unregister(successHandler, errorHandler);
+                  e.preventDefault();
+               }else{
+                  navigator.app.backHistory();
+               }
+             }, false);
+
+            //*** section for notification plug-in  ***//
+            $("#app-status-ul").append('<li>deviceready event received</li>');
+
+
+            try{
+                pushNotification = window.plugins.pushNotification;
+                $("#app-status-ul").append('<li>registering ' + device.platform + '</li>');
+
+                if (device.platform == 'android' || device.platform == 'Android' || device.platform == 'amazon-fireos' ) {
+                    pushNotification.register(successHandler, errorHandler, {"senderID":"268578571335","ecb":"onNotification"}); // required!
+                } else {
+                    pushNotification.register(tokenHandler, errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"onNotificationAPN"}); // required!
+                }
+
+            }catch(err){
+                txt="There was an error on this page.\n\n";
+                txt+="Error description: " + err.message + "\n\n";
+                alert(txt);
+            }
+
+            //*** section for notification plug-in  ***//
+
+
+        }
+
+        function onResume() {
+            // Let the application know it is resuming.
+            if ($rootScope) {
+                $rootScope.$broadcast('resume');
+            }
+        }
+
+         function tokenHandler (result) {
+            $("#app-status-ul").append('<li>token: '+ result +'</li>');
+            // Your iOS push server needs to know the token before it can push to this device
+            // here is where you might want to send it the token for later use.
+         }
+
+         function successHandler (result) {
+            $("#app-status-ul").append('<li>success:'+ result +'</li>');
+         }
+
+         function errorHandler (error) {
+            $("#app-status-ul").append('<li>error:'+ error +'</li>');
+         }
+
+        document.addEventListener('deviceready', initialize, false);
+        document.addEventListener('resume', onResume, false);
+    })();
+
+  function successCallback() {
+        $("#app-status-ul").append('<li>addingBadges</li>');
+    }
+
+    function errorCallback() {
+        $("#app-status-ul").append('<li>error gBadges</li>');
+    }
+
+    function onNotificationAPN(e) {
+
+        if (e.alert) {
+            $("#app-status-ul").append('<li>push-notification:' + e.alert + '</li>');
+            // showing an alert also requires the org.apache.cordova.dialogs plugin
+            //navigator.notification.alert(e.alert);
+        }
+
+        if (e.sound) {
+            // playing a sound also requires the org.apache.cordova.media plugin
+            var snd = new Media(e.sound);
+            snd.play();
+        }
+
+        if (e.badge) {
+            pushNotification.setApplicationIconBadgeNumber(successCallback, errorCallback, e.badge);
+        }
+    }
+
+    // handle GCM notifications for Android
+    function onNotification(e) {
+        $("#app-status-ul").append('<li>EVENT -> RECEIVED:' + e.event + '</li>');
+
+        switch( e.event ){
+            case 'registered':
+            if ( e.regid.length > 0 ){
+                $("#app-status-ul").append('<li>REGISTERED -> REGID:' + e.regid + "</li>");
+                // Your GCM push server needs to know the regID before it can push to this device
+                // here is where you might want to send it the regID for later use.
+                console.log("regID = " + e.regid);
+            }
+            break;
+
+            case 'message':
+            // if this flag is set, this notification happened while we were in the foreground.
+            // you might want to play a sound to get the user's attention, throw up a dialog, etc.
+            if (e.foreground){
+                $("#app-status-ul").append('<li>--INLINE NOTIFICATION--' + '</li>');
+
+                // on Android soundname is outside the payload.
+                // On Amazon FireOS all custom attributes are contained within payload
+                //var soundfile = e.soundname || e.payload.sound;
+                // if the notification contains a soundname, play it.
+                // playing a sound also requires the org.apache.cordova.media plugin
+                //var my_media = new Media("/android_asset/www/"+ soundfile);
+
+                my_media.play();
+            } else {   // otherwise we were launched because the user touched a notification in the notification tray.
+                if (e.coldstart)
+                $("#app-status-ul").append('<li>--COLDSTART NOTIFICATION--' + '</li>');
+                else
+                $("#app-status-ul").append('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+            }
+
+            $("#app-status-ul").append('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
+            //android only
+            $("#app-status-ul").append('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
+            //amazon-fireos only
+            $("#app-status-ul").append('<li>MESSAGE -> TIMESTAMP: ' + e.payload.timeStamp + '</li>');
+            break;
+
+            case 'error':
+            $("#app-status-ul").append('<li>ERROR -> MSG:' + e.msg + '</li>');
+            break;
+
+            default:
+            $("#app-status-ul").append('<li>EVENT -> Unknown, an event was received and we do not know what it is</li>');
+            break;
+        }
+    }
+
+    
+</script>
+</body>
+</html>

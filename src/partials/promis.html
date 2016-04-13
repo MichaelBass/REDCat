@@ -1,0 +1,37 @@
+<div id="app-container">
+	<!-- Header -->
+	<div class="container">
+	<div ng-if="!sequenceEngine.finished" class="col-md-12">
+	    <h2> {{context}}</h2>
+	    <h1 style="margin-top:0;">{{stem}}</h1>
+		<div ng-repeat="response in responses">
+			<button id="{{response.FormItemOID}}" class="btn btn-info wide" name="{{response.ItemResponseOID}}" data-ng-click="selectResponse($event)">{{response.Description}}</button><br/><br/>
+		</div>
+	</div>
+
+	<div ng-if="sequenceEngine.finished">
+	   <h2>Results</h2>
+	   <div class="well">
+	   		<h4>Final T Score: {{finalTScore}}</h4>
+
+	   </div>
+	   <table class="table table-striped col-md-12">
+	      <tr>
+	         <th>Item</th>
+	         <th>Response</th>
+	         <th>Score</th>
+	         <th>SE</th>
+	      </tr>
+	      <tr ng-repeat="score in itemScores">
+	         <td>{{score.field_name}}</td>
+	         <td>{{score.value}}</td>
+	         <td>{{score.Theta}}</td>
+	         <td>{{score.SE}}</td>
+	      </tr>
+
+	   </table>
+	   <a class="btn btn-primary wide" ng-click="surveyFinished()">Continue</a>
+	</div>
+	</div>
+
+</div>

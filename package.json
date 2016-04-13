@@ -1,0 +1,47 @@
+{
+  "name": "REDCat",
+  "version": "1.0.0",
+  "description": "REDCat is a patient facing mobile app for administering PROMIS content authored using REDCap.",
+  "author": "Michael Bass",
+  "contributors": [
+    {
+      "name": "Michael Bass",
+      "email": "michael-bass@northwestern.edu"
+    }
+  ],
+  "license": "UNLICENSED",
+  "dependencies": {
+    "angular": "^1.4.0",
+    "angular-resource": "^1.4.0",
+    "angular-route": "^1.4.0",
+    "cordova": "6.0.0",
+    "font-awesome": "^4.3.0",
+    "moment": "^2.10.2"
+  },
+  "devDependencies": {
+    "angular-mocks": "^1.4.0",
+    "chai": "^2.1.2",
+    "chai-as-promised": "^5.0.0",
+    "eslint": "^1.3.1",
+    "mocha": "^2.2.1",
+    "sinon": "^1.14.1",
+    "testem": "^0.8.0-0",
+    "wd": "^0.3.11"
+  },
+  "keywords": [
+    "promis",
+    "redcap",
+    "study"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelBass/REDCat.git"
+  },
+  "scripts": {
+    "prepare_script":"./scripts/prepare.sh",
+    "endpoint_script":"./scripts/endpoint.sh",
+    "platform_script":"./scripts/platform.sh",
+    "plugin_script":"./scripts/plugin.sh",
+    "build_script":"./scripts/build.sh"
+  }
+}

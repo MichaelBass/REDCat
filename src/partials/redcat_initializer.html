@@ -1,0 +1,39 @@
+<div id="app-container" class="col-md-12">
+    <div class="container">
+        <h2>Welcome to RedCat</h2>
+        Choose a protocol to begin!<br/><br/>
+
+        <table  class="table table-striped">
+        <tr ng-repeat="study in redcat.studies">
+        <td> 
+            <div class="btn-group">
+            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.setProtocol($event)" uib-btn-checkbox>Start</label>
+            <br></br>
+            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.removeProtocol($event)" uib-btn-checkbox>Remove</label>
+            <br></br>
+            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.updateProtocol($event)" uib-btn-checkbox>Update</label>
+            <br></br>
+            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.resultProtocol($event)" uib-btn-checkbox>Results</label>
+            </div>
+        </td>
+        <td>
+            <label for="study{{$index}}">
+            <h3>{{study.name}}</h3>
+            {{study.description}}
+            </label>
+        </td>
+
+        </tr>
+        </table>
+        <div class="jumbotron">
+            Obtain a QRCode from the study coordinator or got to <a href="https://redcatqrcodegenerator.appspot.com/protocol.php" >https://redcatqrcodegenerator.appspot.com/protocol.php</a> for a demo code. Load the Assessment by clicking the button below and scanning the code.
+            <br></br>
+            <button class="btn wide btn-primary" ng-click="redcat.addProtocol()">Add Assessment</button>
+        </div>
+        <div class="jumbotron">
+            {{redcat.message}}
+        </div>        
+    </div>
+
+
+</div>

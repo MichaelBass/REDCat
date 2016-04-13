@@ -1,0 +1,150 @@
+#setup-menu {
+    top: 10px;
+    right: 10px;
+    position: absolute;
+}
+
+#home-title {
+    top: 10px;
+    left: 10px;
+    position: absolute;
+}
+
+#home-title h1 {
+    margin: 0px;
+}
+
+#setup-menu i {
+    font-size: 2em;
+    color: gray;
+}
+
+#smokingStatus .days {
+    font-size: 4.5em;
+    font-weight: 700;
+}
+
+#smokingStatus .suffix {
+    font-size: 1.65em;
+}
+
+.top-buffer5 {
+    margin-top: 5px;
+}
+
+.top-buffer10 {
+    margin-top: 20px;
+}
+
+.top-buffer20 {
+    margin-top: 20px;
+}
+
+.top-buffer40 {
+    margin-top: 40px;
+}
+
+.label-lg {
+    font-size: 1em;
+    margin-top: 5px;
+    display: block;
+}
+
+.btn {
+    white-space: normal;
+}
+
+.btn-lg {
+    font-size: 1.35em;
+    line-height: 1.2em;
+}
+
+#app-container {
+    margin-top: 30px;
+}
+
+.wide {
+    width: 100%;
+}
+
+#cessation_date_input {
+    display: none;
+}
+
+.weekday_button {
+    text-transform: capitalize;
+}
+
+.cessation-reason-row {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.home_button {
+    margin-top: 10px;
+}
+
+.ema-button {
+    padding-top: 5px;
+}
+
+.btn-info{background-color: #FFB347 !important;}
+
+textarea.daily-exercise {
+    height: 120px;
+}
+
+.well .risky-time-view {
+    padding: 0px;
+}
+
+.well .risky-time-view .scrub-padding {
+    padding: 0px;
+}
+
+h1,h2,h3,h4,h5,h6{
+    margin-bottom:.25em;
+}
+
+h1 {
+    font-size:1.7em;
+}
+
+h2 {
+    font-size:1.5em;}
+
+h3 {
+    font-size:1.4em;
+}
+
+h4 {
+    font-size:1.2em;
+}
+
+.home-btn-height {
+    height:120px !important;
+    text-transform: none !important;
+}
+
+.modal-well {
+/*    background: #485563;*/
+}
+
+.slider-response {
+    width:100%;
+}
+.slider-response td {
+    width:auto;
+}
+
+.slider-response td div.extreme-left {
+    text-align: left;
+}
+
+.slider-response td div.extreme-right {
+    text-align: right;
+}
+
+button div.text-transform-default {
+    text-transform: none;
+}
