@@ -96,14 +96,19 @@
           var formattedTitle = APIInstruments[i].Name.replace(' - ','_').replace(/ /g,'_').replace('.','').toLowerCase();
             if(self.redCatInstance.uniqueInstruments[j] == formattedTitle){
 
-              var protocolInstrument = JSON.parse("{\"instrument\":\"" + formattedTitle + "\",\"parameter\":\"" + APIInstruments[i].OID + "\",\"engine\":\"" + Routes.PROMIS + "\"}");
+              var protocolInstrument = {
+                  instrument:formattedTitle,
+                  parameter:APIInstruments[i].OID,
+                  engine: Routes.PROMIS
+              };
+              
               studyprotocol[studyprotocol.length] = protocolInstrument;
               fFound = true;
               continue;
             }  
         }
 
-        //TODO:Need to reimplement
+        //TODO:Need to reimplement (for non PROMIS instruments)
         if(!fFound){
           //var protocolInstrument = JSON.parse("{\"instrument\":\"" + formattedTitle + "\",\"parameter\":\"\",\"engine\":\"" + Routes.SESSIONS + "\"}");
           //this.studyprotocol[this.studyprotocol.length] = protocolInstrument;         
