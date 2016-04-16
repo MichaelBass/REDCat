@@ -42,7 +42,7 @@
     //                  authenticationTokenCache, Routes, synchronizer,
     //                  deviceCache, device, eventService, sessionQuestionService,
     //                 sessionsService, resourceCache, sessionsCache, settingsCache, sessionAnswerCache) {
-    run: function run($rootScope, $location, $q, $window, settings,
+    run: function run($sce,$rootScope,$location, $q, $window, settings,
                       Routes,deviceCache,device,resourceCache,settingsCache) {
  
       settings.fetch().then(function() {
@@ -91,6 +91,6 @@
       //  'Routes', 'synchronizer', 'deviceCache', 'device',
       //  'eventService', 'sessionQuestionService', 'sessionsService', 
       //  'resourceCache', 'sessionsCache', 'settingsCache', 'sessionAnswerCache', Application.run]);
-      .run(['$rootScope', '$location', '$q', '$window','settings',
+      .run(['$sce','$rootScope','$location', '$q', '$window','settings',
         'Routes','deviceCache', 'device','resourceCache','settingsCache', Application.run]);
 })();

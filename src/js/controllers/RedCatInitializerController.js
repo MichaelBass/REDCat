@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  function RedCatInitializerController($http, $location,Routes) {
+  function RedCatInitializerController($http,$location,Routes) {
 
     var self = this;
 
@@ -9,7 +9,6 @@
     this.studies = [];
     this.redCatInstance = {};
 
-    this.message = "Status:";
 
     this.addProtocol = function (){
 
@@ -44,7 +43,7 @@
             self.getCurrentREDCapContent();
           },
           function (error) {
-              self.message = "Error loading protocol attempting to process QRCode.";
+              //self.message = "Error loading protocol attempting to process QRCode.";
           }
       );
     }
@@ -127,7 +126,7 @@
       }
 
       self.redCatInstance.studyprotocol = studyprotocol;
-      self.message = self.message + "process instruments\n";
+      //self.message = self.message + "process instruments\n";
       self.redCatInstance.parameters = [];
       self.getInstrumentParameter();
     }
@@ -208,15 +207,15 @@
                  self.redCatInstance.uniqueInstruments = _.values(_.mapValues(
                   _.uniqBy(data,'form_name'),'form_name'));
 
-                self.message = self.message + "get REDCAP Protocol \nInstruments :" + self.redCatInstance.uniqueInstruments.length + "\n";
-                self.message = self.message + "Items: " + self.redCatInstance.instrumentset.length + "\n";
+                //self.message = self.message + "get REDCAP Protocol \nInstruments :" + self.redCatInstance.uniqueInstruments.length + "\n";
+                //self.message = self.message + "Items: " + self.redCatInstance.instrumentset.length + "\n";
            
                 self.setStudyProtocol();
             }, 
             error: function(jqXHR, textStatus, errorThrown)
             { 
               console.log(errorThrown);
-              self.message = "Error loading protocol attempting to access REDCap server: " + self.redCatInstance.redcat_endpoint;
+              //self.message = "Error loading protocol attempting to access REDCap server: " + self.redCatInstance.redcat_endpoint;
             }
       })
     };
@@ -229,6 +228,8 @@
     this.chkbxs = _.mapValues(this.studies,'ServerData','ServerData');
     this.reminder = _.mapValues(this.studies,'Reminder','Reminder'); 
 
+    //console.log($scope);
+   // $rootScope.myLog = $sce.trustAsHtml($rootScope.myLog += "<br>Page Loaded");
   }
 
   angular.module('redcat.controllers')
