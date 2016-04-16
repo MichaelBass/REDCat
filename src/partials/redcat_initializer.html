@@ -3,34 +3,53 @@
         <h2>Welcome to RedCat</h2>
         Choose a protocol to begin!<br/><br/>
 
-        <table  class="table table-striped">
-        <tr ng-repeat="study in redcat.studies">
-        <td> 
-            <div class="btn-group">
-            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.setProtocol($event)" uib-btn-checkbox>Start</label>
-            <br></br>
-            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.removeProtocol($event)" uib-btn-checkbox>Remove</label>
-            <br></br>
-            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.updateProtocol($event)" uib-btn-checkbox>Update</label>
-            <br></br>
-            <label id="{{$index}}" class="btn wide btn-primary" data-ng-click="redcat.resultProtocol($event)" uib-btn-checkbox>Results</label>
+        <div class="panel panel-danger" ng-repeat="study in redcat.studies">
+          
+            <div class="panel-heading-info" style="text-align:center">
+                <label id="{{$index}}" class="btn btn-danger" data-ng-click="redcat.setProtocol($event)" >
+                <span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start:: {{study.name}}</label>
             </div>
-        </td>
-        <td>
-            <label for="study{{$index}}">
-            <h3>{{study.name}}</h3>
-            {{study.description}}
-            </label>
-        </td>
 
-        </tr>
-        </table>
-        <div class="jumbotron">
+            <div class="container-fluid" style="text-align:center">{{study.description}}<br> </br></div>
+            
+            <div class="input-group input-group-sm">
+              <span class="input-group-addon">
+                <input id="{{$index}}" type="checkbox" ng-checked ="{{redcat.chkbxs[$index]}}"  data-ng-click="redcat.setServerData($event)"/> <label>Send data to server</label>
+              </span>
+            </div>
+
+            <div class="input-group  input-group-sm">
+                <label>Reminders:</label><br>
+                 <span class="input-group-addon">
+                <input name="{{$index}}reminder" id="never" type="radio" ng-checked ="{{redcat.reminder[$index] == 'never'}}" data-ng-click="redcat.setReminder($event)"/> <label>Never</label>
+                </span>
+                <span class="input-group-addon">
+                <input name="{{$index}}reminder" id="daily" type="radio" ng-checked ="{{redcat.reminder[$index] == 'daily'}}" data-ng-click="redcat.setReminder($event)"/> <label>Daily</label>
+                </span>
+                <span class="input-group-addon">
+                <input name="{{$index}}reminder" id="weekly" type="radio" ng-checked ="{{redcat.reminder[$index] == 'weekly'}}" data-ng-click="redcat.setReminder($event)"/> <label>Weekly</label>
+              </span>
+            </div>  
+        <br> </br>
+            <nav class="navbar">
+            <label id="{{$index}}" class="btn btn-default" data-ng-click="redcat.removeProtocol($event)" >
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Remove</label>
+            <label id="{{$index}}" class="btn btn-default" data-ng-click="redcat.updateProtocol($event)" >
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Update</label>
+            <label id="{{$index}}" class="btn btn-default" data-ng-click="redcat.resultProtocol($event)" >
+                <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Results</label>
+            </nav>
+
+        </div>
+
+        <div class="panel panel-danger">
             Obtain a QRCode from the study coordinator or got to <a href="https://redcatqrcodegenerator.appspot.com/protocol.php" >https://redcatqrcodegenerator.appspot.com/protocol.php</a> for a demo code. Load the Assessment by clicking the button below and scanning the code.
             <br></br>
-            <button class="btn wide btn-primary" ng-click="redcat.addProtocol()">Add Assessment</button>
+            <button class="btn wide btn-default" ng-click="redcat.addProtocol()">
+                <span class="glyphicon glyphicon-qrcode" aria-hidden="true"></span> Add Assessment
+            </button>
         </div>
-        <div class="jumbotron">
+        <div class="">
             {{redcat.message}}
         </div>        
     </div>

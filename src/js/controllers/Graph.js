@@ -4,12 +4,16 @@
   function GraphController() {
 
     var mydata =[];
+    var loadedProtocols = JSON.parse(localStorage['StudyProtocols']);
 
-    if(localStorage['graphPoints'] == null){
+    if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == undefined){
+        return;
+    }
+    if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == null){
         return;
     }
 
-    var assessments = JSON.parse(localStorage['graphPoints']);
+    var assessments = loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints;
     var series = _.map(_.uniqBy(assessments,'instrument'),'instrument');
 
     for(var i=0; i < series.length; i++){

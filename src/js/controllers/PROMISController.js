@@ -86,7 +86,22 @@ angular.module('redcat.controllers')
 
 		console.log(JSON.stringify([dataToTransmit]));
 
-      	$.ajax({
+    	newscore = new Object();
+    	newscore.instrument = $scope.studyprotocol[$scope.assessmentIndex].instrument;
+    	newscore.tscore = tScore;
+    	newscore.se = finalSE;
+
+    	var loadedProtocols = JSON.parse(localStorage['StudyProtocols']);
+    	if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == undefined){
+    		loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints = [];
+    	}
+       loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints.push(newscore);
+       localStorage['StudyProtocols'] = JSON.stringify(loadedProtocols);
+
+
+
+		if(loadedProtocols[localStorage['REDCAT_INSTANCE']].ServerData){
+      		$.ajax({
             url: $scope.redcatInstance.redcat_endpoint, 
             cache: false, 
             type: 'POST',
@@ -99,25 +114,14 @@ angular.module('redcat.controllers')
             dataType: 'json', 
             success: function(data) {
 
-            	newscore = new Object();
-            	newscore.instrument = $scope.studyprotocol[$scope.assessmentIndex].instrument;
-            	newscore.tscore = tScore;
-            	newscore.se = finalSE;
-
-            	if(localStorage['graphPoints'] == undefined){
-            		localStorage['graphPoints'] = JSON.stringify([]);
-            	}
-
-            	graphPoints = JSON.parse(localStorage['graphPoints']);
-				graphPoints.push(newscore); 
-				localStorage['graphPoints'] = JSON.stringify(graphPoints);
                 
             }, 
             error: function(jqXHR, textStatus, errorThrown)
             { 
             	console.log(errorThrown);      
             }
-      	})
+      		})
+      	}
     };
 
 

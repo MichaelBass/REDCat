@@ -1,9 +1,10 @@
 (function () {
   'use strict';
 
-  function RedCatInitializerController($http, $location, Routes) {
+  function RedCatInitializerController($http, $location,Routes) {
 
     var self = this;
+
     this.api = JSON.parse(localStorage['settings'])[0];
     this.studies = [];
     this.redCatInstance = {};
@@ -58,6 +59,7 @@
     };
 
     this.resultProtocol = function (event){
+      localStorage['REDCAT_INSTANCE'] = parseInt(event.target.id);
       $location.url(Routes.GRAPHS);
     };    
 
@@ -67,6 +69,19 @@
       this.redCatInstance = this.studies[parseInt(event.target.id)];
       //this.message = "Status:Updating Protocol";
       this.getCurrentREDCapContent();
+    };
+
+    this.setServerData = function (event){
+      //alert("we are here "+ parseInt(event.target.id) + ":" + event.target.checked);
+      var loadedProtocols = JSON.parse(localStorage['StudyProtocols']);
+      loadedProtocols[parseInt(event.target.id)].ServerData = event.target.checked;
+      localStorage['StudyProtocols'] = JSON.stringify(loadedProtocols);
+    };
+
+    this.setReminder = function (event){
+       var loadedProtocols = JSON.parse(localStorage['StudyProtocols']);
+       loadedProtocols[parseInt(event.target.name.substring(0, 1))].Reminder = event.target.id;
+       localStorage['StudyProtocols'] = JSON.stringify(loadedProtocols);
     };
 
     this.removeProtocol = function (event){
@@ -211,8 +226,8 @@
     }
      
     this.studies = JSON.parse(localStorage['StudyProtocols']);
-
-    //$http.get(this.REDCAT_CONFIG_PATH).success(function(data){self.studies = data;});
+    this.chkbxs = _.mapValues(this.studies,'ServerData','ServerData');
+    this.reminder = _.mapValues(this.studies,'Reminder','Reminder'); 
 
   }
 
