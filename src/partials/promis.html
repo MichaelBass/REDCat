@@ -2,8 +2,9 @@
 	<!-- Header -->
 	<div class="container">
 	<div ng-if="!sequenceEngine.finished" class="col-md-12">
-	    <h2> {{context}}</h2>
-	    <h1 style="margin-top:0;">{{stem}}</h1>
+		<div ng-bind-html="context"></div>
+	    <!--<h2> {{context}}</h2>-->
+	    <h1 style="margin-top:0;"><div ng-bind-html="stem"></div></h1>
 		<div ng-repeat="response in responses">
 			<button id="{{response.FormItemOID}}" class="btn btn-info wide" name="{{response.ItemResponseOID}}" data-ng-click="selectResponse($event)">{{response.Description}}</button><br/><br/>
 		</div>

@@ -11,43 +11,31 @@
 
       return $http.get(RESOURCE_PATH)
         .then(function(settings) {
-          var settingsData = angular.copy(settings.data);
 
+          var settingsData = angular.copy(settings.data);
           // '$window.device.uuid' dependent on Cordova device plugin
           settingsData.clientUuid = $window.device.uuid || DEFAULT_DEVICE_ID;
           settingsCache.persist(settingsData);
-
 
           if(localStorage['APIInstruments'] == undefined){
 
             var api = JSON.parse(localStorage['settings'])[0];
             var basicAuthentication = api.userid +":" + api.password;
-       
-            $.ajax({
+            var wordArray = CryptoJS.enc.Utf8.parse(basicAuthentication);
+            var authenticateToken = CryptoJS.enc.Base64.stringify(wordArray);
+
+            $http({
+              method:'POST',
               url: api.server + "Forms/.json", 
-              cache: false, 
-              type: 'POST',
-              data: '',
-              dataType: 'json', 
-
-              beforeSend: function(xhr) {
-                //var bytes = Crypto.charenc.Binary.stringToBytes(basicAuthentication);
-                //var base64 = Crypto.util.bytesToBase64(bytes);
-                //xhr.setRequestHeader("Authorization", "Basic " + base64);
-                var wordArray = CryptoJS.enc.Utf8.parse(basicAuthentication);
-                var authenticateToken = CryptoJS.enc.Base64.stringify(wordArray);
-                xhr.setRequestHeader("Authorization", "Basic " + authenticateToken);
+              headers: {
+                'Authorization': "Basic " + authenticateToken
               },
-
-              success: function(data) {
-                localStorage.APIInstruments = JSON.stringify(data.Form);
-              }, 
-              error: function(jqXHR, textStatus, errorThrown)
-              { 
-                console.log(errorThrown);
-              }
-            })
-
+              data: {}
+              }).then(function successCallback(response) {
+                localStorage.APIInstruments = JSON.stringify(response.data.Form);
+              },function errorCallback(response) {
+                console.log(response);
+              }); 
           }
 
 

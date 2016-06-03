@@ -14,7 +14,7 @@
       }
 
       angular.forEach(copied, function(record) {
-        delete record.isDirty;
+        //delete record.isDirty;  MBB don't delete anything 
       });
 
       return copied;
@@ -44,9 +44,8 @@
       // Reject duplicates.
       angular.forEach(data, function(d) {
         if (angular.equals(removeMetaData(record)[0], d)) {
-          isRejected = true;
-
-          return;
+          //isRejected = true;  MBB Don't reject anything!
+          //return;
         }
       });
 
@@ -68,6 +67,7 @@
 
     // Returns the first datum with a matching id, or null.
     this.fetch = function(key, id) {
+ 
       var data = this.fetchAll(key);
 
       for (var i = 0; i < data.length; i++) {
@@ -132,9 +132,32 @@
       }
 
       this.destroyAll(key);
-      storage()[key] = data;
+      storage()[key] = JSON.stringify(data);// try to stringify data instead of just data
       return null;
     };
+
+    // Save item back to collection
+    this.persistItem = function(key, datum) {
+
+      var data = this.fetchAll(key);
+
+       var datumExists = false;
+       for(var i=0; i < data.length;i++){
+        if(datum.id == data[i].id){
+          data[i] = datum;
+          datumExists = true;
+          break;
+        }
+       }
+
+       if(!datumExists){
+        data[data.length] = datum;
+       }
+
+      storage()[key] = JSON.stringify(data);// try to stringify data instead of just data
+      return null;
+    };
+
   }
 
   function ResourceCacheFactory($window, $filter) {

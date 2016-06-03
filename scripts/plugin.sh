@@ -15,10 +15,17 @@ fi
 ./node_modules/.bin/cordova plugin add cordova-plugin-network-information;
 
 
-if [  -d plugins/cordova-plugin-pushplugin ]; then
-	./node_modules/.bin/cordova plugin remove cordova-plugin-pushplugin;
+if [  -d plugins/phonegap-plugin-push ]; then
+	./node_modules/.bin/cordova plugin remove phonegap-plugin-push;
 fi
-./node_modules/.bin/cordova plugin add cordova-plugin-pushplugin;
+##./node_modules/.bin/cordova plugin add cordova-plugin-pushplugin;
+./node_modules/.bin/cordova plugin add phonegap-plugin-push --variable SENDER_ID="268578571335";
+
+if [  -d plugins/cordova-plugin-whitelist ]; then
+	./node_modules/.bin/cordova plugin remove cordova-plugin-whitelist;
+fi
+./node_modules/.bin/cordova plugin add cordova-plugin-whitelist;
+
 
 ## dependancy from pushplugin
 ##./node_modules/.bin/cordova plugin remove cordova-plugin-device; 

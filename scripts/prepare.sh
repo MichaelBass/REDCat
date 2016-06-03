@@ -16,6 +16,7 @@ echo "eslint before copying"
 
 echo "copy src files to www"
 cp src/redcat.gif www/
+cp src/ajax-loader.gif www/
 cp src/redcat.ico www/
 cp src/index.html www/
 cp -r src/js/* www/js/

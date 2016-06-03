@@ -1,3 +1,22 @@
+
+.spinner {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:1000;
+    background-color:grey;
+    opacity: .8;
+}
+.ajax-loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -32px; /* -1 * image width / 2 */
+    margin-top: -32px;  /* -1 * image height / 2 */
+    display: block;     
+}
 #setup-menu {
     top: 10px;
     right: 10px;
@@ -19,14 +38,6 @@
     color: gray;
 }
 
-#smokingStatus .days {
-    font-size: 4.5em;
-    font-weight: 700;
-}
-
-#smokingStatus .suffix {
-    font-size: 1.65em;
-}
 
 .top-buffer5 {
     margin-top: 5px;
@@ -67,40 +78,15 @@
     width: 100%;
 }
 
-#cessation_date_input {
-    display: none;
-}
 
-.weekday_button {
-    text-transform: capitalize;
-}
-
-.cessation-reason-row {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
 
 .home_button {
     margin-top: 10px;
 }
 
-.ema-button {
-    padding-top: 5px;
-}
 
 .btn-info{background-color: #FFB347 !important;}
 
-textarea.daily-exercise {
-    height: 120px;
-}
-
-.well .risky-time-view {
-    padding: 0px;
-}
-
-.well .risky-time-view .scrub-padding {
-    padding: 0px;
-}
 
 h1,h2,h3,h4,h5,h6{
     margin-bottom:.25em;
@@ -126,24 +112,8 @@ h4 {
     text-transform: none !important;
 }
 
-.modal-well {
-/*    background: #485563;*/
-}
 
-.slider-response {
-    width:100%;
-}
-.slider-response td {
-    width:auto;
-}
 
-.slider-response td div.extreme-left {
-    text-align: left;
-}
-
-.slider-response td div.extreme-right {
-    text-align: right;
-}
 
 button div.text-transform-default {
     text-transform: none;

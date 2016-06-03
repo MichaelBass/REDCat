@@ -42,6 +42,7 @@
     "endpoint_script":"./scripts/endpoint.sh",
     "platform_script":"./scripts/platform.sh",
     "plugin_script":"./scripts/plugin.sh",
-    "build_script":"./scripts/build.sh"
+    "build_script":"./scripts/build.sh",
+    "browser":"./node_modules/.bin/cordova run browser"
   }
 }

@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="redcat.ico">
     <link rel="icon" type="image/gif" href="redcat.gif">
 
-    <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css"><!-- 3.3.6 -->
     <link rel="stylesheet" href="vendor/css/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="vendor/css/mobiscroll.custom-2.16.0.min.css">
     <link rel="stylesheet" href="vendor/css/ui-bootstrap-0.13.3-csp.css">
@@ -17,11 +17,13 @@
 </head>
 <body>
 
+    <div class="spinner" ng-show="loading"><img src="ajax-loader.gif" class="ajax-loader"/></div>
     <div ng-view class="container-fluid" id="main"></div>
-    <div id="status" ng-bind-html="myLog"></div>
-
+    <div ng-bind-html="myLog"></div>
+    
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="vendor/js/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/angular.min.js"></script>
     <script type="text/javascript" src="js/angular-route.min.js"></script>
     <script type="text/javascript" src="js/angular-resource.min.js"></script>
@@ -47,26 +49,97 @@
     <script type="text/javascript" src="js/resources/Settings.js"></script>
     <script type="text/javascript" src="js/services/Connection.js"></script>
     <script type="text/javascript" src="js/services/Device.js"></script>
+    <script type="text/javascript" src="js/services/REDCap.js"></script>
+    <script type="text/javascript" src="js/services/PROMIS.js"></script>
+    <script type="text/javascript" src="js/services/RemoteNotification.js"></script>
 
     <script type="text/javascript" src="js/caches/DeviceCache.js"></script>
     <script type="text/javascript" src="js/caches/ResourceCache.js"></script>
     <script type="text/javascript" src="js/caches/SettingsCache.js"></script>
-
+    <script type="text/javascript" src="js/caches/ProtocolsCache.js"></script>
 
 
 <script>
 
+
     (function() {
         var $rootScope;
-        
 
         function initialize() {
             // Access the $rootScope from outside the application.
             var injector = angular.bootstrap(document.getElementById('REDCat-app'), ['redcat']);
             $rootScope = injector.get('$rootScope');
             $sce = injector.get('$sce');
+            var remoteNotification = injector.get('remoteNotification');
 
-             document.addEventListener("backbutton", function(e)
+            //*** section for notification plug-in  ***//
+            var push = PushNotification.init({ "android": {"senderID": "268578571335"}, "ios": {"alert": "true", "badge": "true", "sound": "true", "clearBadge": "true"}, "windows": {} } );
+
+            PushNotification.hasPermission(function(data) {
+                if (data.isEnabled) {
+                    console.log('isEnabled');
+                }
+            });
+            
+            push.on('registration', function(data) {
+
+              var promis = remoteNotification.updateReminder(data.registrationId, 'undefined', '0');
+              promis.then(
+                function(response){
+                  console.log(response)
+                  localStorage['registerToken'] = response.data.token;
+                },
+                function(error){
+                  alert(error);
+                  localStorage['registerToken'] = 'browsertoken';
+                }
+              );
+
+            });
+
+            push.on('notification', function(data) {
+                console.log(data.message);
+                //alert(data.message);
+                $rootScope.myLog = $sce.trustAsHtml(data.message);
+                // data.title,
+                // data.count,
+                // data.sound,
+                // data.image,
+                // data.additionalData
+            });
+
+            push.on('error', function(e) {
+                console.log(e.message);
+                localStorage['registerToken'] = 'browsertoken';
+                $rootScope.myLog = $sce.trustAsHtml(e.message + "<br/>");
+                //alert('error::' + e.message);
+            });
+/*
+            push.unregister(function() {
+                alert('unregister::success');
+            }, function() {
+                alert('unregister::error');
+            });
+
+            push.setApplicationIconBadgeNumber(function() {
+                alert('setApplicationIconBadgeNumber::success');
+            }, function() {
+                alert('setApplicationIconBadgeNumber::error');
+            }, 1);
+
+            push.getApplicationIconBadgeNumber(function(n) {
+                alert('getApplicationIconBadgeNumber::success', n);
+            }, function() {
+                alert('getApplicationIconBadgeNumber::error');
+            });
+
+            push.finish(function() {
+                alert('finish::success');
+            }, function() {
+                alert('finish::error');
+            }, 'push-1');
+*/
+            document.addEventListener("backbutton", function(e)
             {
 
               console.log("backbutton event received");
@@ -79,138 +152,12 @@
                }
              }, false);
 
-            //*** section for notification plug-in  ***//
-
-            console.log("deviceready event received");
-            $rootScope.myLog = $sce.trustAsHtml("deviceready::event received");
-
-            try{
-                pushNotification = window.plugins.pushNotification;
-                console.log('registering ' + device.platform + '');
-
-                if (device.platform == 'android' || device.platform == 'Android' || device.platform == 'amazon-fireos' ) {
-                    pushNotification.register(successHandler, errorHandler, {"senderID":"268578571335","ecb":"onNotification"}); // required!
-                } else {
-                    pushNotification.register(tokenHandler, errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"onNotificationAPN"}); // required!
-                }
-
-            }catch(err){
-                txt="There was an error on this page.\n\n";
-                txt+="Error description: " + err.message + "\n\n";
-                console.log("err:" + txt);
-                alert(txt);
-            }
-
-            //*** section for notification plug-in  ***//
-
-
         }
-
-        function onResume() {
-            // Let the application know it is resuming.
-            if ($rootScope) {
-                $rootScope.$broadcast('resume');
-            }
-        }
-
-         function tokenHandler (result) {
-            console.log('token: '+ result);
-            // Your iOS push server needs to know the token before it can push to this device
-            // here is where you might want to send it the token for later use.
-         }
-
-         function successHandler (result) {
-            console.log('success:'+ result );
-         }
-
-         function errorHandler (error) {
-            console.log('error:'+ error );
-            $rootScope.myLog = $sce.trustAsHtml($rootScope.myLog += "<br>error: " + error);
-         }
 
         document.addEventListener('deviceready', initialize, false);
-        document.addEventListener('resume', onResume, false);
+        //document.addEventListener('resume', onResume, false);
     })();
-
-  function successCallback() {
-        console.log('addingBadges');
-    }
-
-    function errorCallback() {
-        console.log('errorCallback');
-    }
-
-    function onNotificationAPN(e) {
-
-        if (e.alert) {
-            console.log('push-notification:' + e.alert);
-            // showing an alert also requires the org.apache.cordova.dialogs plugin
-            //navigator.notification.alert(e.alert);
-        }
-
-        if (e.sound) {
-            // playing a sound also requires the org.apache.cordova.media plugin
-            var snd = new Media(e.sound);
-            snd.play();
-        }
-
-        if (e.badge) {
-            pushNotification.setApplicationIconBadgeNumber(successCallback, errorCallback, e.badge);
-        }
-    }
-
-    // handle GCM notifications for Android
-    function onNotification(e) {
-        console.log('EVENT -> RECEIVED:' + e.event );
-
-        switch( e.event ){
-            case 'registered':
-            if ( e.regid.length > 0 ){
-                console.log('REGISTERED -> REGID:' + e.regid );
-                // Your GCM push server needs to know the regID before it can push to this device
-                // here is where you might want to send it the regID for later use.
-            }
-            break;
-
-            case 'message':
-            // if this flag is set, this notification happened while we were in the foreground.
-            // you might want to play a sound to get the user's attention, throw up a dialog, etc.
-            if (e.foreground){
-                console.log('--INLINE NOTIFICATION--');
-
-                // on Android soundname is outside the payload.
-                // On Amazon FireOS all custom attributes are contained within payload
-                //var soundfile = e.soundname || e.payload.sound;
-                // if the notification contains a soundname, play it.
-                // playing a sound also requires the org.apache.cordova.media plugin
-                //var my_media = new Media("/android_asset/www/"+ soundfile);
-
-                my_media.play();
-            } else {   // otherwise we were launched because the user touched a notification in the notification tray.
-                if (e.coldstart)
-                console.log('--COLDSTART NOTIFICATION--');
-                else
-                $console.log('--BACKGROUND NOTIFICATION--');
-            }
-
-            console.log('MESSAGE -> MSG: ' + e.payload.message);
-            //android only
-            console.log('MESSAGE -> MSGCNT: ' + e.payload.msgcnt );
-            //amazon-fireos only
-            console.log('MESSAGE -> TIMESTAMP: ' + e.payload.timeStamp );
-            break;
-
-            case 'error':
-            console.log('ERROR -> MSG:' + e.msg );
-            break;
-
-            default:
-            console.log('EVENT -> Unknown, an event was received and we do not know what it is');
-            break;
-        }
-    }
-
-    
+  
 </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 
 angular.module('redcat.controllers')
 
-.controller('PROMISController', function($scope, $http, $rootScope, $routeParams, $location,$sce, Routes) {
+.controller('PROMISController', function($scope, $http, $rootScope, $routeParams, $location,$sce,protocolsCache, Routes) {
 
 	var scores = [];
 	//storage.bind($rootScope, 'scores', JSON.stringify(scores));
@@ -13,7 +13,7 @@ angular.module('redcat.controllers')
 
 	$scope.scores = [];
 
-	$scope.redcatInstance = JSON.parse(localStorage['StudyProtocols'])[localStorage['REDCAT_INSTANCE']];
+	$scope.redcatInstance = protocolsCache.fetch(parseInt(localStorage['REDCAT_INSTANCE']));
 	$scope.assessmentIndex = $routeParams.index;
 
 	$scope.currentInstruments = $scope.redcatInstance.instrumentset;
@@ -54,10 +54,17 @@ angular.module('redcat.controllers')
 			}
 		}
 
-		$scope.calibrations = JSON.parse($scope.parameters[$scope.assessmentIndex]);
-		$scope.sequenceEngine = new $scope.engine($scope.calibrations);
-		$scope.sequenceEngine.init( );
-		$scope.renderScreen($scope.sequenceEngine.display());
+		for(var j=0; j < $scope.parameters.length; j++){
+			if( $scope.studyprotocol[$scope.assessmentIndex].parameter == JSON.parse($scope.parameters[j]).FormOID ){
+				$scope.calibrations = JSON.parse($scope.parameters[j]);
+				$scope.sequenceEngine = new $scope.engine($scope.calibrations);
+				$scope.sequenceEngine.init( );
+				$scope.renderScreen($scope.sequenceEngine.display());
+				break;
+			}
+		}
+
+
 
 	};
 
@@ -84,23 +91,27 @@ angular.module('redcat.controllers')
 		//dataToTransmit["assessment_identifier_complete"] = 2;
 		dataToTransmit['record_id'] =  participantid + "_" + localStorage['AssessmentTimeStamp'];
 
-		console.log(JSON.stringify([dataToTransmit]));
+		//console.log(JSON.stringify([dataToTransmit]));
 
     	newscore = new Object();
     	newscore.instrument = $scope.studyprotocol[$scope.assessmentIndex].instrument;
     	newscore.tscore = tScore;
     	newscore.se = finalSE;
 
-    	var loadedProtocols = JSON.parse(localStorage['StudyProtocols']);
-    	if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == undefined){
-    		loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints = [];
+		var study = protocolsCache.fetch(parseInt(localStorage['REDCAT_INSTANCE']));
+		if(study == null){
+			alert("error accessing protocol");
+		}
+    	
+    	if(study.graphPoints == undefined){
+    		study.graphPoints = [];
     	}
-       loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints.push(newscore);
-       localStorage['StudyProtocols'] = JSON.stringify(loadedProtocols);
+       	study.graphPoints.push(newscore);
 
+		protocolsCache.persistItem(study);
+   
 
-
-		if(loadedProtocols[localStorage['REDCAT_INSTANCE']].ServerData){
+		if(study.ServerData){
       		$.ajax({
             url: $scope.redcatInstance.redcat_endpoint, 
             cache: false, 
@@ -143,8 +154,9 @@ angular.module('redcat.controllers')
 		
 		for(var i=0; i < $scope.items.length; i++){
 			if($scope.items[i].section_header == ItemID){
-				//$scope.context = $scope.items[i].field_label;$sce.trustAsHtml(someHtmlVar)
-				$scope.stem = $sce.trustAsHtml($scope.items[i].field_label.replace("In the past 7 days","In the past 7 days  "));
+				//carriage return after the context In the past 7 days
+				$scope.stem = $sce.trustAsHtml($scope.items[i].field_label.replace(/(\r\n|\n|\r)/g,'<br />'));
+		
 				$scope.responses = [];
 				var choices = $scope.items[i].select_choices_or_calculations.split(' | '); 
 				for (var j=0; j < choices.length; j++){

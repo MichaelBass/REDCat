@@ -1,19 +1,19 @@
 (function() {
   'use strict';
 
-  function GraphController() {
+  function GraphController(protocolsCache) {
 
     var mydata =[];
-    var loadedProtocols = JSON.parse(localStorage['StudyProtocols']);
-
-    if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == undefined){
+    //var loadedProtocols = JSON.parse(localStorage['StudyProtocols']);
+    
+    var study  = protocolsCache.fetch(parseInt(localStorage['REDCAT_INSTANCE']));
+    
+    //if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == undefined){
+    if(study.graphPoints == null || study.graphPoints == undefined){    
         return;
     }
-    if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == null){
-        return;
-    }
 
-    var assessments = loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints;
+    var assessments = study.graphPoints;// loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints;
     var series = _.map(_.uniqBy(assessments,'instrument'),'instrument');
 
     for(var i=0; i < series.length; i++){
@@ -71,6 +71,5 @@
   }
 
   angular.module('redcat.controllers')
-    .controller('GraphController',
-    [GraphController]);
+    .controller('GraphController',['protocolsCache',GraphController]);
 })();
