@@ -44,7 +44,7 @@
     //                 sessionsService, resourceCache, sessionsCache, settingsCache, sessionAnswerCache) {
     run: function run($sce,$rootScope,$location, $q, $window,settings,
                       Routes,deviceCache,device,resourceCache,settingsCache,protocolsCache) {
- 
+
       settings.fetch().then(function() {
 
         // $rootScope.$on('resume', function() {

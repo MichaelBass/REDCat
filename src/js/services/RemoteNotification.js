@@ -10,10 +10,10 @@
       if (device.platform == 'android' || device.platform == 'Android' || device.platform == 'amazon-fireos' ) {
           mobilePlatform = 'android';
       }
-
+      var api = JSON.parse(localStorage['settings'])[0];
       return $http({
         method:'POST',
-        url: 'https://default-demo-app-25d1e.appspot.com/main?registerToken=true&mobilePlatform='+ mobilePlatform + '&token='+ token + '&protocol=' + studyName + '&reminder=' + reminder, 
+        url: api.notificationserver + 'main?registerToken=true&mobilePlatform='+ mobilePlatform + '&token='+ token + '&protocol=' + studyName + '&reminder=' + reminder, 
         data: ''
         })
     }

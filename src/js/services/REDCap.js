@@ -6,8 +6,9 @@
 
     this.getProtocol = function(qrCode) {
 
-      var key2 = CryptoJS.enc.Hex.parse('59b6ab46d379b89d794c87b74a511fbd59b6ab46d379b89d794c87b74a511fbd');
-      var iv2  = CryptoJS.enc.Hex.parse('0aaff094b6dc29742cc98a4bac8bc8f9');
+      var api = JSON.parse(localStorage['settings'])[0];
+      var key2 = CryptoJS.enc.Hex.parse(api.key2);
+      var iv2  = CryptoJS.enc.Hex.parse(api.iv2);
 
       var _protocol = JSON.parse(qrCode);
 

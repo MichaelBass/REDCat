@@ -71,9 +71,11 @@
             $rootScope = injector.get('$rootScope');
             $sce = injector.get('$sce');
             var remoteNotification = injector.get('remoteNotification');
-
+            var settingsCache = injector.get('settingsCache');
+            var api = settingsCache.first(); //JSON.parse(localStorage['settings'])[0];
             //*** section for notification plug-in  ***//
-            var push = PushNotification.init({ "android": {"senderID": "268578571335"}, "ios": {"alert": "true", "badge": "true", "sound": "true", "clearBadge": "true"}, "windows": {} } );
+
+            var push = PushNotification.init({ "android": {"senderID": api.notificationkey}, "ios": {"alert": "true", "badge": "true", "sound": "true", "clearBadge": "true"}, "windows": {} } );
 
             PushNotification.hasPermission(function(data) {
                 if (data.isEnabled) {
@@ -86,12 +88,19 @@
               var promis = remoteNotification.updateReminder(data.registrationId, 'undefined', '0');
               promis.then(
                 function(response){
-                  console.log(response)
-                  localStorage['registerToken'] = response.data.token;
+                    console.log(response)
+                    //localStorage['registerToken'] = response.data.token;
+                    api.registerToken = response.data.token;
+                    api.key2 = response.data.key2;
+                    api.iv2 = response.data.iv2;
+                    settingsCache.persistItem(api);
                 },
                 function(error){
-                  alert(error);
-                  localStorage['registerToken'] = 'browsertoken';
+                    alert(error);
+                    api.registerToken = 'browsertoken';
+                    api.key2 = response.data.key2;
+                    api.iv2 = response.data.iv2;
+                    settingsCache.persistItem(api);
                 }
               );
 
@@ -110,7 +119,9 @@
 
             push.on('error', function(e) {
                 console.log(e.message);
-                localStorage['registerToken'] = 'browsertoken';
+                //localStorage['registerToken'] = 'browsertoken';
+                api.registerToken = 'browsertoken';
+                settingsCache.persistItem(api);
                 $rootScope.myLog = $sce.trustAsHtml(e.message + "<br/>");
                 //alert('error::' + e.message);
             });

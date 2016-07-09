@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  function RedCatInitializerController($http,$location,$rootScope,$scope,redcap,promisapi,remoteNotification,protocolsCache,Routes) {
+  function RedCatInitializerController($http,$location,$rootScope,$scope,redcap,promisapi,remoteNotification,protocolsCache,settingsCache,Routes) {
 
     var self = this;
 
@@ -78,7 +78,7 @@
     $scope.setReminder = function (event){
 
       var key = event.target.name.substring(0, event.target.name.length - 8);// parse out reminder suffix
-
+      var api = settingsCache.first();
       localStorage['REDCAT_INSTANCE'] = parseInt(key);
       $scope.key = parseInt(key);
 
@@ -87,7 +87,7 @@
       protocolsCache.persistItem($scope.redCatInstance);
 
       var _reminder = 0;
-      var token = localStorage['registerToken'];
+      var token = api.registerToken;
       
       var studyName = $scope.redCatInstance.name;
 
@@ -98,7 +98,7 @@
         _reminder = 7;
       }
 
-      if(localStorage['registerToken'] != undefined){
+      if(token != undefined){
         var promis = remoteNotification.updateReminder(token, studyName, _reminder);
         promis.then(
           function(response){
@@ -236,5 +236,5 @@
 
   angular.module('redcat.controllers')
     .controller('RedCatInitializerController',
-    [ '$http','$location','$rootScope','$scope','redcap','promisapi','remoteNotification','protocolsCache','Routes', RedCatInitializerController ]);
+    [ '$http','$location','$rootScope','$scope','redcap','promisapi','remoteNotification','protocolsCache','settingsCache','Routes', RedCatInitializerController ]);
 })();

@@ -5,6 +5,7 @@
     this.KEY = 'settings';
 
     cache.delegate(this, 'persist');
+    cache.delegate(this, 'persistItem');
     cache.delegate(this, 'first');
     cache.delegate(this, 'fetchAllDirty');
     cache.delegate(this, 'markClean');

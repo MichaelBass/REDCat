@@ -8,6 +8,10 @@
     
     var study  = protocolsCache.fetch(parseInt(localStorage['REDCAT_INSTANCE']));
     
+    if (study == null){
+        return;
+    }
+
     //if(loadedProtocols[localStorage['REDCAT_INSTANCE']].graphPoints == undefined){
     if(study.graphPoints == null || study.graphPoints == undefined){    
         return;

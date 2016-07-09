@@ -15,7 +15,9 @@
           var settingsData = angular.copy(settings.data);
           // '$window.device.uuid' dependent on Cordova device plugin
           settingsData.clientUuid = $window.device.uuid || DEFAULT_DEVICE_ID;
-          settingsCache.persist(settingsData);
+
+          //settingsCache.persist(settingsData);
+          settingsCache.persistItem(settingsData);
 
           if(localStorage['APIInstruments'] == undefined){
 
