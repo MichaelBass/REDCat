@@ -6,7 +6,9 @@
     this.persistMetadata = function() {
       var device = $window.device;
  
-      deviceCache.persist({
+      deviceCache.destroyAll();
+
+      deviceCache.persistItem({
         id: uuid(),
         type: deviceCache.KEY,
         deviceUuid: device.uuid,
