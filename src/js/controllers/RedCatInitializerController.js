@@ -1,13 +1,28 @@
 (function () {
   'use strict';
 
-  function RedCatInitializerController($http,$location,$rootScope,$scope,redcap,promisapi,remoteNotification,protocolsCache,settingsCache,Routes) {
+  function RedCatInitializerController($http,$location,$rootScope,$scope,redcap,promisapi,remoteNotification,protocolsCache,settingsCache,settings,Routes) {
 
     var self = this;
 
     $scope.studies = protocolsCache.fetchAll();
     $scope.key = -1;
     localStorage['REDCAT_INSTANCE'] = -1;
+
+    $scope.getServerSettings = function(){
+      var rtn = 1.00;
+      if(settingsCache.first().server_version != undefined){
+        console.log(settingsCache.first());
+        rtn = settingsCache.first().server_version;
+      }
+      return rtn;
+    };
+  
+    $scope.updateServerSettings = function(){
+
+      settings.update();
+
+    }
 
     $scope.addProtocol = function (){
 
@@ -55,10 +70,24 @@
 
     $scope.updateProtocol = function (event){
       $rootScope.loading = true;
+
       localStorage['REDCAT_INSTANCE'] = parseInt(event.target.id);
       $scope.key = parseInt(event.target.id);
       $scope.redCatInstance = protocolsCache.fetch($scope.key);
+
+      //reset notification and data server
+      var api = settingsCache.first();
+      $scope.setNotification(api.registerToken, $scope.redCatInstance.name, 0);
+      $scope.redCatInstance.Reminder="";
+      $scope.redCatInstance.ServerData = false;
+      protocolsCache.persistItem($scope.redCatInstance);
+      //$scope.chkbxs = _.mapValues($scope.studies,'ServerData','ServerData');
+      //$scope.reminder = _.mapValues($scope.studies,'Reminder','Reminder');
+
+
+
       $scope.getCurrentREDCapContent();
+
 
       //$rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog +  "updating protocol : " +  $scope.key + "<br/>");
 
@@ -74,6 +103,22 @@
       protocolsCache.persistItem($scope.redCatInstance);
 
     };
+
+    $scope.setNotification = function (token, studyName, reminder){
+
+      if(token != undefined){
+        var promis = remoteNotification.updateReminder(token, studyName, reminder);
+        promis.then(
+          function(response){
+            //$rootScope.myLog =  $sce.trustAsHtml(response + "<br/>");
+          },
+          function(error){
+            alert(error);
+          }
+        );
+      }
+
+    }
 
     $scope.setReminder = function (event){
 
@@ -98,26 +143,22 @@
         _reminder = 7;
       }
 
-      if(token != undefined){
-        var promis = remoteNotification.updateReminder(token, studyName, _reminder);
-        promis.then(
-          function(response){
-            console.log(response)
-          },
-          function(error){
-            alert(error);
-          }
-        );
-      }
+      $scope.setNotification(token, studyName, _reminder);
 
     };
 
     $scope.removeProtocol = function (event){
 
+      var api = settingsCache.first();
+      $scope.redCatInstance = protocolsCache.fetch(parseInt(event.target.id));
+      $scope.setNotification(api.registerToken, $scope.redCatInstance.name, 0);
+      $scope.redCatInstance.Reminder="";
+      $scope.redCatInstance.ServerData = false;
+      //$scope.chkbxs = _.mapValues($scope.studies,'ServerData','ServerData');
+      //$scope.reminder = _.mapValues($scope.studies,'Reminder','Reminder');
+
       protocolsCache.destroyItem(parseInt(event.target.id));
       $scope.studies = protocolsCache.fetchAll();
-
-      //$rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog +  "removing protocol : " +  parseInt(event.target.id) + "  remaining protcols : " + $scope.studies.length + "<br />");
 
       $scope.key = -1;
       localStorage['REDCAT_INSTANCE'] = -1;
@@ -137,7 +178,7 @@
 
       for(var j=0; j < $scope.redCatInstance.uniqueInstruments.length; j++) {
 
-        $rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog + $scope.redCatInstance.uniqueInstruments[j] + "<br/>");
+        //$rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog + $scope.redCatInstance.uniqueInstruments[j] + "<br/>");
 
         if($scope.redCatInstance.uniqueInstruments[j] == "assessment_identifier"){
           continue;
@@ -163,7 +204,7 @@
               promis.then(
                 function(calibration){
 
-                  $rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog +  "getInstrumentParameter::" + formattedTitle + "<br/>");
+                 // $rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog +  "getInstrumentParameter::" + formattedTitle + "<br/>");
                   //console.log(calibration)
                   if(calibration.data == "Document is null"){
                     $scope.redCatInstance.parameters.push("");
@@ -204,7 +245,7 @@
       $scope.redCatInstance = protocolsCache.fetch($scope.key);
       localStorage['REDCAT_INSTANCE'] = $scope.key;
 
-      $rootScope.myLog =  $sce.trustAsHtml("Done persisting protocol : " + $scope.redCatInstance.id  + "<br/>");
+      //$rootScope.myLog =  $sce.trustAsHtml("Done persisting protocol : " + $scope.redCatInstance.id  + "<br/>");
       $rootScope.loading = false;
 
     }
@@ -218,7 +259,7 @@
 
           $scope.redCatInstance.instrumentset = instruments.data;
           $scope.redCatInstance.uniqueInstruments = _.values(_.mapValues(_.uniqBy(instruments.data,'form_name'),'form_name'));
-          $rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog +  "getCurrentREDCapContent" + "<br/>");
+          //$rootScope.myLog =  $sce.trustAsHtml($rootScope.myLog +  "getCurrentREDCapContent" + "<br/>");
           $scope.setStudyProtocol();
           
         },
@@ -231,10 +272,10 @@
 
     $scope.chkbxs = _.mapValues($scope.studies,'ServerData','ServerData');
     $scope.reminder = _.mapValues($scope.studies,'Reminder','Reminder'); 
-
+    $scope.ServerSettings = $scope.getServerSettings();
   }
 
   angular.module('redcat.controllers')
     .controller('RedCatInitializerController',
-    [ '$http','$location','$rootScope','$scope','redcap','promisapi','remoteNotification','protocolsCache','settingsCache','Routes', RedCatInitializerController ]);
+    [ '$http','$location','$rootScope','$scope','redcap','promisapi','remoteNotification','protocolsCache','settingsCache','settings','Routes', RedCatInitializerController ]);
 })();
