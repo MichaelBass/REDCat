@@ -1,7 +1,7 @@
 {
-  "name": "REDCat",
+  "name": "HealthMeasures",
   "version": "1.0.0",
-  "description": "REDCat is a patient facing mobile app for administering PROMIS content authored using REDCap.",
+  "description": "HealthMeasures is a patient facing mobile app for administering PROMIS content authored using REDCap.",
   "author": "Michael Bass",
   "contributors": [
     {
