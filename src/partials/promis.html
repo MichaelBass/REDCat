@@ -1,12 +1,14 @@
-<div id="app-container">
+<div id="app-container" class="jumbotron">
 	<!-- Header -->
 	<div class="container">
-	<div ng-if="!sequenceEngine.finished" class="col-md-12">
+	<!--<div ng-if="!sequenceEngine.finished" class="col-md-12">-->
+	<div ng-if="!sequenceEngine.finished" class="jumbotron">
 		<div ng-bind-html="context"></div>
 	    <!--<h2> {{context}}</h2>-->
 	    <h1 style="margin-top:0;"><div ng-bind-html="stem"></div></h1>
-		<div ng-repeat="response in responses">
-			<button id="{{response.FormItemOID}}" class="btn btn-info wide" name="{{response.ItemResponseOID}}" data-ng-click="selectResponse($event)">{{response.Description}}</button><br/><br/>
+		<br/>
+		<div ng-repeat="response in responses" style="padding: 4px;">
+			<button id="{{response.FormItemOID}}" class="btn btn-primary wide" name="{{response.ItemResponseOID}}" data-ng-click="selectResponse($event)">{{response.Description}}</button>
 		</div>
 	</div>
 
