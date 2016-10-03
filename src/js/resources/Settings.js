@@ -3,8 +3,48 @@
 
   function Resource($http, $window, settingsCache) {
     var RESOURCE_PATH = 'config.json',
-        DEFAULT_DEVICE_ID = 'DUMMY-DEVICE';
+        DEFAULT_DEVICE_ID = 'DUMMY-DEVICE',
+        SERVER_RESOURCE_PATH ='http://default-demo-app-25d1e.appspot.com/settings';
 
+
+    this.update = function update(){
+
+      var api = settingsCache.first();
+
+      $http({
+        method:'POST',
+        url: SERVER_RESOURCE_PATH,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept':'application/json'
+        }, 
+        data: 'token=' + api.registerToken 
+        }).then(function successCallback(response) {
+          //console.log(response.data);
+
+          var api = settingsCache.first();
+          api.server_version = response.data.server_version;
+          api.environment = response.data.environment;
+          api.server = response.data.server;
+          api.id = response.data.id;
+          api.iv2 = response.data.iv2;
+          api.key2 = response.data.key2;
+          api.notificationkey = response.data.notificationkey;
+          api.notificationserver = response.data.notificationserver;
+          api.password = response.data.password;
+          api.userid = response.data.userid;
+
+          settingsCache.persistItem(api);
+
+        },function errorCallback(response) {
+          alert(response);
+        }); 
+
+
+
+      //console.log($http.get(SERVER_RESOURCE_PATH + api.registerToken));
+
+    } 
 
 
     this.fetch = function fetch() {
