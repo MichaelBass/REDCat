@@ -15,9 +15,9 @@ echo "eslint before copying"
 ./node_modules/.bin/eslint src
 
 echo "copy src files to www"
-cp src/redcat.gif www/
+cp src/healthmeasures.gif www/
 cp src/ajax-loader.gif www/
-cp src/redcat.ico www/
+cp src/healthmeasures.ico www/
 cp src/index.html www/
 cp -r src/js/* www/js/
 cp -r src/css/* www/css/
